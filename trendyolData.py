@@ -142,7 +142,11 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                 title = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > h1", timeout=10, default="Başlık bulunamadı")
 
                 # 3) Başlık, fiyat, puan (ilk olarak bunlar)
-                price = get_text_or(driver, By.CLASS_NAME, "price-view-original", timeout=6, default="Fiyat bulunamadı")
+                price = get_text_or(driver, By.CLASS_NAME, "price-view-original", timeout=6, default="")
+                if not price or price == "Fiyat bulunamadı":
+                    price = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.tooltip-wrapper > div > div.price-view > span.discounted", timeout=6, default="")
+                if not price or price == "Fiyat bulunamadı":
+                    price = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.price.normal-price > div > span", timeout=6, default="Fiyat bulunamadı")
                 rating = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.product-details-other-details > div > div > div > span", timeout=6, default="Puan bulunamadı")
 
                 print("Başlık:", title)
