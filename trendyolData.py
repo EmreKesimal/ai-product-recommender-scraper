@@ -151,12 +151,21 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                 # Ürün başlığı görününceye kadar bekle
                 title = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > h1", timeout=10, default="Başlık bulunamadı")
 
-                # 3) Başlık, fiyat, puan (ilk olarak bunlar)
-                price = get_text_or(driver, By.CLASS_NAME, "price-view-original", timeout=6, default="")
-                if not price or price == "Fiyat bulunamadı":
-                    price = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.tooltip-wrapper > div > div.price-view > span.discounted", timeout=6, default="")
-                if not price or price == "Fiyat bulunamadı":
-                    price = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.price.normal-price > div > span", timeout=6, default="Fiyat bulunamadı")
+                # 3) Başlık, fiyat, puan (ilk olarak bunlar) - Fiyat için çoklu selector ile deneme
+                price_selectors = [
+                    "#envoy > div > div.tooltip-wrapper > div > div.price-view > span.discounted",
+                    "#envoy > div > div.tooltip-wrapper > div > div.price-view > span",
+                    "#envoy > div > div.price.campaign-price > div.campaign-price-content > p.new-price",
+                    "#envoy > div > div.price.normal-price > div > span"
+                ]
+                price = "Fiyat bulunamadı"
+                for selector in price_selectors:
+                    try:
+                        price = driver.find_element(By.CSS_SELECTOR, selector).text
+                        if price:
+                            break
+                    except:
+                        continue
                 rating = get_text_or(driver, By.CSS_SELECTOR, "#envoy > div > div.product-details-other-details > div > div > div > span", timeout=6, default="Puan bulunamadı")
 
                 print("Başlık:", title)
