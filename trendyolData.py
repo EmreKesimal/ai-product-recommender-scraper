@@ -1,3 +1,13 @@
+from pymongo import MongoClient
+
+# MongoDB Atlas bağlantısı
+mongo_uri = "mongodb+srv://scraper4253:yamandede403@cluster0.cv576qm.mongodb.net/scrapingdb?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(mongo_uri)
+
+# scrapingdb veritabanı ve products koleksiyonu
+db = client.scrapingdb
+products_collection = db.products
+
 from selenium.webdriver.chrome.service import Service as ChromeService
 from bs4 import BeautifulSoup
 from selenium import webdriver
