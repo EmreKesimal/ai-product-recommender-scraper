@@ -151,6 +151,7 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                 if href and href.startswith("/"): href = "https://www.trendyol.com" + href
 
                 open_in_new_tab_and_switch(driver, href)
+                time.sleep(1) # GÜNCELLEME: Yeni sekmenin yüklenmesi için bekle
 
                 raw_product_data = {"url": href}
 
@@ -160,9 +161,9 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                                                          "#envoy > div > div.product-details-other-details > div > div > div > span",
                                                          timeout=6, default="Puan bulunamadı")
 
-                # GÜNCELLENDİ: Değerlendirme sayısını daha güvenilir bir seçici ile çek
+                # GÜNCELLENDİ: Değerlendirme sayısını daha spesifik bir seçici ile çek
                 raw_product_data["rating_count"] = get_text_or(driver, By.CSS_SELECTOR,
-                                                               "a[data-testid='review-info-link']", timeout=6,
+                                                               "a[data-testid='review-info-link'] b", timeout=6,
                                                                default="0")
 
                 raw_product_data["image_url"] = get_attribute_or(driver, By.CSS_SELECTOR, "img[data-testid='image']",
@@ -194,6 +195,7 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                                                             'a[data-testid="show-more-button"][href*="/yorumlar"]').get_attribute(
                             "href")
                         open_in_new_tab_and_switch(driver, comments_link)
+                        time.sleep(1) # GÜNCELLEME: Yorum sayfasının yüklenmesi için bekle
                         print("Daha fazla yorum yükleniyor...")
                         for _ in range(5):
                             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -213,6 +215,7 @@ def visit_products(category_url: str, headless: bool = True) -> None:
                                                       'a[data-testid="show-more-button"][href*="saticiya-sor"]').get_attribute(
                             "href")
                         open_in_new_tab_and_switch(driver, qa_link)
+                        time.sleep(1) # GÜNCELLEME: Soru-Cevap sayfasının yüklenmesi için bekle
                         WebDriverWait(driver, 10).until(
                             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.pr-qna-v2 > div > div > div")))
                         qa_blocks = driver.find_elements(By.CSS_SELECTOR, "div.pr-qna-v2 > div > div > div")
@@ -284,6 +287,6 @@ def visit_products(category_url: str, headless: bool = True) -> None:
 
 if __name__ == "__main__":
     # Örnek bir kategori URL'si
-    TARGET_URL = "https://www.trendyol.com/sr?q=kulakl%C4%B1k&qt=kulakl%C4%B1k&st=kulakl%C4%B1k&os=1"
+    TARGET_URL = "https://www.trendyol.com/sr?q=vantilat%C3%B6r&qt=vantilat%C3%B6r&st=vantilat%C3%B6r&os=1"
     # headless=True yaparak arka planda çalıştırabilirsiniz
     visit_products(TARGET_URL, headless=False)
